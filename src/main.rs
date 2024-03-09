@@ -10,7 +10,7 @@ const TEXT: &str = "Blazingly fast";
 fn main() -> io::Result<()> {
     let mut stdout = io::stdout();
 
-    let text_length = TEXT.len() as u16;
+    let text_length = TEXT.chars().count() as u16;
 
     stdout.execute(terminal::Clear(terminal::ClearType::All))?;
 
