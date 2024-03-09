@@ -1,7 +1,4 @@
-use crossterm::{
-    cursor::{self, RestorePosition, SavePosition},
-    style, terminal, ExecutableCommand, QueueableCommand,
-};
+use crossterm::{cursor, style, terminal, ExecutableCommand, QueueableCommand};
 use std::{
     io::{self, Write},
     thread::sleep,
@@ -20,14 +17,12 @@ fn main() -> io::Result<()> {
     let mut x = 20;
     let mut y = 20;
 
-    stdout.execute(terminal::Clear(terminal::ClearType::All))?;
-    stdout.queue(SavePosition)?;
+    stdout.execute(terminal::EnterAlternateScreen)?;
 
     loop {
-        let (width, height) = crossterm::terminal::size()?;
+        stdout.execute(terminal::Clear(terminal::ClearType::CurrentLine))?;
 
-        stdout.queue(RestorePosition)?;
-        stdout.queue(SavePosition)?;
+        let (width, height) = crossterm::terminal::size()?;
 
         if moving_right {
             x += 1;
@@ -51,12 +46,9 @@ fn main() -> io::Result<()> {
 
         stdout
             .queue(cursor::MoveTo(x, y))?
-            .queue(style::Print(TEXT))?;
-
-        stdout.flush()?;
+            .queue(style::Print(TEXT))?
+            .flush()?;
 
         sleep(Duration::new(0, 25000000));
     }
-
-    Ok(())
 }
