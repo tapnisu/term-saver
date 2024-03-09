@@ -24,10 +24,10 @@ fn main() -> io::Result<()> {
     stdout.queue(SavePosition)?;
 
     loop {
+        let (width, height) = crossterm::terminal::size()?;
+
         stdout.queue(RestorePosition)?;
         stdout.queue(SavePosition)?;
-
-        let (width, height) = crossterm::terminal::size()?;
 
         if moving_right {
             x += 1;
@@ -41,13 +41,21 @@ fn main() -> io::Result<()> {
             y += 1;
         }
 
+        if x == width - text_length || x == 1 {
+            moving_right = !moving_right;
+        }
+
+        if y == height || y == 1 {
+            moving_top = !moving_top;
+        }
+
         stdout
             .queue(cursor::MoveTo(x, y))?
             .queue(style::Print(TEXT))?;
 
         stdout.flush()?;
 
-        sleep(Duration::new(1, 0));
+        sleep(Duration::new(0, 25000000));
     }
 
     Ok(())
