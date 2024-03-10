@@ -41,6 +41,8 @@ fn main() {
     })
     .expect("Error setting Ctrl-C handler");
 
+    let sleep_duration = Duration::new(0, 1_000_000_000 / cli.moves_per_second);
+
     while running.load(Ordering::SeqCst) {
         stdout
             .execute(terminal::Clear(terminal::ClearType::CurrentLine))
@@ -76,7 +78,7 @@ fn main() {
             .flush()
             .unwrap();
 
-        sleep(Duration::new(0, 25000000));
+        sleep(sleep_duration);
     }
 
     stdout
