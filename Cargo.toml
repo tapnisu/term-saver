@@ -2,7 +2,20 @@
 name = "term-saver"
 version = "0.1.0"
 edition = "2021"
+readme = "README.md"
+authors = ["Aleksei Rybin <0xalekseirybin@gmail.com>"]
+description = "Have you ever wanted to install screensaver in your terminal? Please visit a therapist."
+keywords = ["ascii", "terminal", "cli"]
+license = "MIT"
+
+rust-version = "1.74"
+
+documentation = "https://docs.rs/term-saver"
+repository = "https://github.com/tapciify/term-saver"
+homepage = "https://github.com/tapciify/term-saver"
+categories = ["command-line-utilities"]
 
 [dependencies]
-crossterm = "0.27"
+clap = { version = "4.5.2", features = ["derive"] }
+crossterm = "0.27.0"
 ctrlc = "3.4.2"

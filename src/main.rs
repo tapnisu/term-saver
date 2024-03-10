@@ -1,3 +1,7 @@
+mod cli;
+
+use clap::Parser;
+use cli::Cli;
 use crossterm::{cursor, style, terminal, ExecutableCommand, QueueableCommand};
 use std::{
     io::{self, Write},
@@ -9,17 +13,19 @@ use std::{
     time::Duration,
 };
 
-const TEXT: &str = "Blazingly fast";
-
 fn main() {
+    let cli = Cli::parse();
+
     let mut stdout = io::stdout();
 
-    let text_length = TEXT.chars().count() as u16;
+    let text = cli.text.as_str();
+    let text_length = text.chars().count() as u16;
+
     let mut moving_right = true;
     let mut moving_top = false;
 
-    let mut x = 20;
-    let mut y = 20;
+    let mut x = 1;
+    let mut y = 1;
 
     stdout
         .execute(cursor::Hide)
@@ -65,7 +71,7 @@ fn main() {
         stdout
             .queue(cursor::MoveTo(x, y))
             .unwrap()
-            .queue(style::Print(TEXT))
+            .queue(style::Print(text))
             .unwrap()
             .flush()
             .unwrap();
