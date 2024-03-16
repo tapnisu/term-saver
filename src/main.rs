@@ -13,7 +13,7 @@ use std::{
     time::Duration,
 };
 
-fn main() {
+fn main() -> Result<(), clap::Error> {
     let cli = Cli::parse();
 
     let mut stdout = io::stdout();
@@ -28,10 +28,8 @@ fn main() {
     let mut y = 1;
 
     stdout
-        .execute(cursor::Hide)
-        .unwrap()
-        .execute(terminal::EnterAlternateScreen)
-        .unwrap();
+        .execute(cursor::Hide)?
+        .execute(terminal::EnterAlternateScreen)?;
 
     let running = Arc::new(AtomicBool::new(true));
     let r = running.clone();
@@ -44,11 +42,9 @@ fn main() {
     let sleep_duration = Duration::new(0, 1_000_000_000 / cli.moves_per_second);
 
     while running.load(Ordering::SeqCst) {
-        stdout
-            .execute(terminal::Clear(terminal::ClearType::CurrentLine))
-            .unwrap();
+        stdout.execute(terminal::Clear(terminal::ClearType::CurrentLine))?;
 
-        let (width, height) = crossterm::terminal::size().unwrap();
+        let (width, height) = crossterm::terminal::size()?;
 
         if moving_right {
             x += 1;
@@ -71,19 +67,16 @@ fn main() {
         }
 
         stdout
-            .queue(cursor::MoveTo(x, y))
-            .unwrap()
-            .queue(style::Print(text))
-            .unwrap()
-            .flush()
-            .unwrap();
+            .queue(cursor::MoveTo(x, y))?
+            .queue(style::Print(text))?
+            .flush()?;
 
         sleep(sleep_duration);
     }
 
     stdout
-        .execute(cursor::Show)
-        .unwrap()
-        .execute(terminal::LeaveAlternateScreen)
-        .unwrap();
+        .execute(cursor::Show)?
+        .execute(terminal::LeaveAlternateScreen)?;
+
+    Ok(())
 }
