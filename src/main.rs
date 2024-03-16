@@ -13,15 +13,13 @@ use std::{
     time::Duration,
 };
 
-fn main() -> Result<(), clap::Error> {
+fn main() {
     let cli = Cli::parse();
     let mut cmd = Cli::command();
 
     if let Err(err) = term_saver(&cli.text, cli.moves_per_second) {
         cmd.error(ErrorKind::Io, err).exit()
     }
-
-    Ok(())
 }
 
 fn term_saver(text: &str, moves_per_second: u32) -> Result<(), io::Error> {
