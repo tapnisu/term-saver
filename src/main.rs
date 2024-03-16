@@ -1,6 +1,6 @@
 mod cli;
 
-use clap::Parser;
+use clap::{error::ErrorKind, CommandFactory, Parser};
 use cli::Cli;
 use crossterm::{cursor, style, terminal, ExecutableCommand, QueueableCommand};
 use std::{
@@ -15,10 +15,18 @@ use std::{
 
 fn main() -> Result<(), clap::Error> {
     let cli = Cli::parse();
+    let mut cmd = Cli::command();
 
+    if let Err(err) = term_saver(&cli.text, cli.moves_per_second) {
+        cmd.error(ErrorKind::Io, err).exit()
+    }
+
+    Ok(())
+}
+
+fn term_saver(text: &str, moves_per_second: u32) -> Result<(), io::Error> {
     let mut stdout = io::stdout();
 
-    let text = cli.text.as_str();
     let text_length = text.chars().count() as u16;
 
     let mut moving_right = true;
@@ -34,12 +42,11 @@ fn main() -> Result<(), clap::Error> {
     let running = Arc::new(AtomicBool::new(true));
     let r = running.clone();
 
-    ctrlc::set_handler(move || {
+    let _ = ctrlc::set_handler(move || {
         r.store(false, Ordering::SeqCst);
-    })
-    .expect("Error setting Ctrl-C handler");
+    });
 
-    let sleep_duration = Duration::new(0, 1_000_000_000 / cli.moves_per_second);
+    let sleep_duration = Duration::new(0, 1_000_000_000 / moves_per_second);
 
     while running.load(Ordering::SeqCst) {
         stdout.execute(terminal::Clear(terminal::ClearType::CurrentLine))?;
