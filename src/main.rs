@@ -30,8 +30,8 @@ fn term_saver(text: &str, moves_per_second: u32) -> Result<(), io::Error> {
     let mut moving_right = true;
     let mut moving_top = false;
 
-    let mut x = 1;
-    let mut y = 1;
+    let mut x = 0;
+    let mut y = 0;
 
     stdout
         .execute(cursor::Hide)?
@@ -63,11 +63,11 @@ fn term_saver(text: &str, moves_per_second: u32) -> Result<(), io::Error> {
             y += 1;
         }
 
-        if x == width - text_length || x == 1 {
+        if x == width - text_length || x == 0 {
             moving_right = !moving_right;
         }
 
-        if y == height || y == 1 {
+        if y == height - 1 || y == 0 {
             moving_top = !moving_top;
         }
 
